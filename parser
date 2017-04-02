@@ -1,0 +1,139 @@
+package Parser;
+
+import java_cup.runtime.*;
+import AST.*;
+
+parser code {:
+public void syntax_error(Symbol s) {
+  report_error("Error de sintaxis en linea " + s.left, null);
+}
+
+public void unrecovered_syntax_error(Symbol s) throws
+  java.lang.Exception {
+  report_fatal_error("", null);
+}
+:};
+
+
+terminal PC, ASOP, IF, THEN, ELSE, ENDIF, WHILE, PRINT, INT2STR, STR2INT,
+THENX, NOT, MENORQUE, MAS, MENOS, UMENOS, POR, DIV, AND, OR, IGUALQUE,
+MAYORQUE, PAREN, TESIS, PROG, ABRELLAVE, CIERRALLAVE, COMA, VARS;
+
+terminal Integer CLOG;
+terminal String CST;
+terminal Integer CENT;
+terminal String IDENT;
+terminal Integer TIPO;
+
+non terminal S S;
+non terminal LVar LVar;
+non terminal Sent Sent;
+non terminal LSent LSent;
+non terminal Body Body;
+non terminal SentSimp SentSimp;
+non terminal Asign Asign;
+non terminal Cond Cond;
+non terminal Repet Repet;
+non terminal Print Print;
+non terminal Exp Exp;
+non terminal VDef VDef;
+non terminal Decl Decl;
+
+precedence right OR;
+precedence right AND;
+precedence right NOT;
+precedence right IGUALQUE;
+precedence right MENORQUE, MAYORQUE;
+precedence right MAS, MENOS;
+precedence right POR, DIV;
+precedence right UMENOS;
+
+start with S;
+
+S ::= PROG IDENT:i PAREN LVar:lv TESIS Body:b
+		{:RESULT=new S1(i,lv,b); :}
+   	| PROG IDENT:i Body:b
+		{:RESULT=new S2(i,b); :}
+	| PROG IDENT:i VARS VDef:vd Body:b
+		{:RESULT=new S3(i,vd,b); :}
+	| PROG IDENT:i PAREN LVar:lv TESIS VARS VDef:vd Body:b
+		{:RESULT=new S4(i,lv,vd,b); :} ;
+VDef ::= Decl:d PC
+		{:RESULT=new VD1(d); :}
+	| Decl:d PC VDef:vd
+		{:RESULT=new VD2(d,vd); :} ;
+Decl ::= TIPO:t LVar:lv
+		{:RESULT=new DC1(t,lv); :} ;
+LVar ::= IDENT:i
+		{:RESULT=new LV1(i); :}
+	| IDENT:i COMA LVar:lv
+		{:RESULT=new LV2(i,lv); :} ;
+Body ::= Sent:s 
+		{:RESULT=new B1(s); :} ;
+SentSimp ::= Asign:a PC
+		{:RESULT=new SS1(a); :}
+	| Cond:c 
+		{:RESULT=new SS2(c); :} 
+	| Repet:r 
+		{:RESULT=new SS3(r); :}
+	| Print:p PC
+		{:RESULT=new SS4(p); :} ;
+Print ::= PRINT PAREN Exp:e TESIS
+		{:RESULT=new P1(e); :} ;
+Asign ::= IDENT:i ASOP Exp:e
+		{:RESULT=new A1(i,e); :} ;
+Cond ::= IF Exp:e THEN Sent:s ENDIF
+		{:RESULT=new C1(e,s); :}
+	| IF Exp:e THEN Sent:s1 ELSE Sent:s2 ENDIF
+		{:RESULT=new C2(e,s1,s2); :}
+	| IF Exp:e THEN Sent:s THENX Sent:s1 ELSE Sent:s2 ENDIF
+		{:RESULT=new C3(e,s,s1,s2); :} ;
+Repet ::= WHILE Exp:e Sent:s
+		{:RESULT=new R1(e,s); :} ;
+LSent ::= SentSimp:sp
+		{:RESULT=new LS1(sp); :}
+	| LSent:ls SentSimp:sp1
+		{:RESULT=new LS2(ls,sp1); :} ;
+Sent ::= SentSimp:s 
+		{:RESULT=new Se1(s); :}
+	| ABRELLAVE LSent:ls CIERRALLAVE
+		{:RESULT=new Se2(ls); :} ;
+
+Exp ::= IDENT:i 
+		{:RESULT=new Exp1(i); :}
+	| PAREN Exp:e TESIS 
+		{:RESULT=new Exp2(e); :}
+	| CENT:e
+		{:RESULT=new Exp3(e); :}
+	| Exp:e MAS Exp:e1 
+		{:RESULT=new Exp4(e,e1); :}
+	| Exp:e MENOS Exp:e1
+		{:RESULT=new Exp5(e,e1); :}
+	| Exp:e POR Exp:e1
+		{:RESULT=new Exp6(e,e1); :}
+	| Exp:e DIV Exp:e1
+		{:RESULT=new Exp7(e,e1); :}
+	| MENOS Exp:e
+		 {:RESULT=new Exp8(e); :} %prec UMENOS
+	| STR2INT PAREN Exp:e TESIS 
+		 {:RESULT=new Exp9(e); :}
+	| CST:c
+		{:RESULT=new Exp10(c); :}	
+	| INT2STR PAREN Exp:e TESIS
+		{:RESULT=new Exp12(e); :}
+	| CLOG:c
+		{:RESULT=new Exp13(c); :}
+	| Exp:e OR Exp:e1
+		{:RESULT=new Exp14(e,e1); :}
+	| Exp:e AND Exp:e1
+		{:RESULT=new Exp15(e,e1); :}
+	| NOT Exp:e
+		{:RESULT=new Exp16(e); :}
+	| Exp:e IGUALQUE Exp:e1
+		{:RESULT=new Exp17(e,e1); :}
+	| Exp:e MENORQUE Exp:e1
+		{:RESULT=new Exp18(e,e1); :}
+	| Exp:e MAYORQUE Exp:e1
+		{:RESULT=new Exp19(e,e1); :} ;
+	
+	

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Grupo nick="gajaja">
+  <Alumno>
+    <NIU><![CDATA[100293069]]></NIU>
+    <Apellidos><![CDATA[DIAZ DEL CAMPO CLEMENTE]]></Apellidos>
+    <Nombre><![CDATA[GABRIEL]]></Nombre>
+    <GrupoReducido><![CDATA[g71]]></GrupoReducido>
+  </Alumno>
+  <Alumno>
+    <NIU><![CDATA[100291206]]></NIU>
+    <Apellidos><![CDATA[RUIZ RUIZ]]></Apellidos>
+    <Nombre><![CDATA[JAVIER]]></Nombre>
+    <GrupoReducido><![CDATA[g71]]></GrupoReducido>
+  </Alumno>
+  <Alumno>
+    <NIU><![CDATA[100291482]]></NIU>
+    <Apellidos><![CDATA[BAUTISTA RAMOS]]></Apellidos>
+    <Nombre><![CDATA[JAVIER]]></Nombre>
+    <GrupoReducido><![CDATA[g71]]></GrupoReducido>
+  </Alumno>
+</Grupo>
